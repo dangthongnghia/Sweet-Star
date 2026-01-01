@@ -1,65 +1,84 @@
-import Image from "next/image";
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
+import ProductCard from '@/components/product/ProductCard';
+import prisma from '@/lib/prisma';
 
-export default function Home() {
+async function getFeaturedProducts() {
+  const products = await prisma.product.findMany({
+    take: 6,
+    include: { category: true } // Include category relation if needed for display logic
+  });
+  return products;
+}
+
+export const dynamic = 'force-dynamic';
+
+export default async function Home() {
+  const products = await getFeaturedProducts();
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="flex flex-col min-h-screen">
+      {/* Hero Section */}
+      <section className="bg-gradient-to-r from-[#FFF0F0] to-[#FFE5E5] py-20 px-4 sm:px-6 lg:px-8 text-center">
+        <h1 className="text-4xl sm:text-6xl font-extrabold text-gray-900 tracking-tight mb-4">
+          Bước vào thế giới <span className="text-primary">Ngọt Ngào</span>
+        </h1>
+        <p className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto">
+          Cung cấp đầy đủ dụng cụ, nguyên liệu và công thức làm bánh chuẩn ngon.
+          Đặt mua Combo để nhận ngay bí kíp làm bánh bất bại!
+        </p>
+        <div className="mt-8 flex justify-center gap-4">
+          <Link href="/shop" className="bg-primary text-black px-8 py-3 rounded-full font-medium hover:opacity-90 transition flex items-center">
+            Mua sắm ngay <ArrowRight className="ml-2 w-5 h-5" />
+          </Link>
+          <Link href="/shop?category=combo" className="bg-white text-primary border border-primary px-8 py-3 rounded-full font-medium hover:bg-gray-50 transition">
+            Xem Combo
+          </Link>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* Featured Products */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+        <div className="flex justify-between items-end mb-8">
+          <h2 className="text-3xl font-bold text-gray-900">Sản phẩm nổi bật</h2>
+          <Link href="/shop" className="text-primary hover:opacity-80 font-medium flex items-center">
+            Xem tất cả <ArrowRight className="ml-1 w-4 h-4" />
+          </Link>
         </div>
-      </main>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {products.map((product: any) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      </section>
+
+      {/* Features/Info Section */}
+      <section className="bg-white py-16 border-t">
+        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+          <div className="p-6">
+            <div className="bg-[#FFF0F0] w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl">🍰</span>
+            </div>
+            <h3 className="font-bold text-lg mb-2">Đa dạng nguyên liệu</h3>
+            <p className="text-gray-600">Từ bột mì, bơ, sữa đến các loại hạt cao cấp.</p>
+          </div>
+          <div className="p-6">
+            <div className="bg-[#FFF0F0] w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl">🎁</span>
+            </div>
+            <h3 className="font-bold text-lg mb-2">Combo tiện lợi</h3>
+            <p className="text-gray-600">Mua combo đầy đủ nguyên liệu, tặng kèm công thức chi tiết.</p>
+          </div>
+          <div className="p-6">
+            <div className="bg-[#FFF0F0] w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl">🚀</span>
+            </div>
+            <h3 className="font-bold text-lg mb-2">Giao hàng nhanh</h3>
+            <p className="text-gray-600">Đóng gói cẩn thận, giao hàng tận nơi trên toàn quốc.</p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
