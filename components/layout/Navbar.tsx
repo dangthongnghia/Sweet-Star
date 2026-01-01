@@ -38,7 +38,7 @@ export default async function Navbar() {
                                 </div>
                                 {/* @ts-ignore */}
                                 {session.user.role === 'ADMIN' && (
-                                    <Link href="/admin/products" className="text-sm text-gray-500 hover:underline">
+                                    <Link href="/admin/products" className="text-xl text-gray-500 hover:underline">
                                         Admin
                                     </Link>
                                 )}
