@@ -1,23 +1,7 @@
-import { auth } from "@/auth"
-import { NextResponse } from "next/server"
+import NextAuth from "next-auth"
+import { authConfig } from "./auth.config"
 
-export default auth((req) => {
-    const isLcggedIn = !!req.auth;
-    // @ts-ignore
-    const role = req.auth?.user?.role;
-    const isOnAdminPanel = req.nextUrl.pathname.startsWith('/admin');
-
-    if (isOnAdminPanel) {
-        if (!isLcggedIn) {
-            return NextResponse.redirect(new URL('/login', req.nextUrl));
-        }
-        if (role !== 'ADMIN') {
-            return NextResponse.redirect(new URL('/', req.nextUrl));
-        }
-    }
-
-    return NextResponse.next();
-})
+export default NextAuth(authConfig).auth
 
 export const config = {
     matcher: ["/admin/:path*"],
